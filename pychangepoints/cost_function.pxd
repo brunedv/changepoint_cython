@@ -8,7 +8,7 @@ ITYPE = np.int64
 ctypedef np.float64_t DTYPE_t
 ctypedef np.int64_t ITYPE_t
 
-from libc.math cimport sqrt,log,M_PI, fmax
+from libc.math cimport sqrt, log, M_PI, fmax, isnan
 
 
 @cython.wraparound(False)
@@ -53,4 +53,46 @@ cdef inline DTYPE_t mbic_meanvar_poisson(DTYPE_t x, DTYPE_t x2, DTYPE_t x3, ITYP
   else:
     resultat=2*x*(log(n)-log(x))+log(n)
   return(resultat)
+cdef inline  DTYPE_t mll_nonparametric_ed(np.ndarray[DTYPE_t, ndim=1] sumstatout, ITYPE_t tstar, ITYPE_t checklist, ITYPE_t nquantiles, ITYPE_t n):
+  cdef DTYPE_t Fkl
+  cdef DTYPE_t temp_cost
+  cdef DTYPE_t cost
+  cdef ITYPE_t nseg, isum
+
+  cost = 0
+  temp_cost = 0
+  nseg = tstar - checklist
+
+  for isum in range(0,nquantiles):
+    Fkl = (sumstatout[isum])/(nseg)
+    temp_cost = (tstar-checklist)*(Fkl*log(Fkl)+(1-Fkl)*log(1-Fkl))
+    if(isnan(temp_cost)):
+      cost = cost
+    else:
+      cost = cost + temp_cost
+
+
+  cost = -2*(log(2*n-1))*cost/(nquantiles)
+  return(cost)
+
+
+cdef inline  DTYPE_t  mll_nonparametric_ed_mbic(np.ndarray[DTYPE_t, ndim=1] sumstatout, ITYPE_t tstar, ITYPE_t checklist, ITYPE_t nquantiles, ITYPE_t n):
+  cdef DTYPE_t Fkl
+  cdef DTYPE_t temp_cost
+  cdef DTYPE_t cost
+  cdef ITYPE_t nseg, isum
+
+  cost = 0
+  temp_cost = 0
+  nseg = tstar - checklist
+
+  for isum in range(0,nquantiles):
+    Fkl = (sumstatout[isum])/(nseg)
+    temp_cost = (tstar-checklist)*(Fkl*log(Fkl)+(1-Fkl)*log(1-Fkl))
+    if(isnan(temp_cost)):
+      cost = cost
+    else:
+      cost = cost + temp_cost
+  cost = -2*(log(2*n-1))*cost/(nquantiles)
+  return(cost)
 

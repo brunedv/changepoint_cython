@@ -5,7 +5,8 @@ from Cython.Build import cythonize, build_ext
 #Cython.Compiler.Options.annotate = True
 import numpy
 
-extensions = [Extension('pychangepoints.cython_pelt',['pychangepoints/pelt_cython.pyx','pychangepoints/cost_function.pxd'])]
+extensions = [Extension('pychangepoints.cython_pelt',['pychangepoints/pelt_cython.pyx','pychangepoints/cost_function.pxd'
+                                                       'pychangepoints/utils.pxd'])]
 setup(
     name = 'changepoint_cython',
     version = '0.1',

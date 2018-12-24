@@ -3,15 +3,15 @@ import time
 import pandas as pd
 from pychangepoints  import  cython_pelt, algo_changepoints
 if __name__ == '__main__':
-    size_ts = 20000
-    cpts_true = [0,150,800,size_ts]
+    size_ts = 1000
+    cpts_true = [0,100,800,size_ts]
     nb_seg = len(cpts_true)-1
     nb_cpts = nb_seg-1
     mean=np.array([2,1,1])
     var=np.array([0.5,1,0.01])
 
-    method = "mbic_meanvar"
-    pen_ = 10
+    method = "mll_meanvar"
+    pen_ = 10.0
     minseg = 2
     time_series=np.zeros(size_ts)
 
@@ -37,4 +37,6 @@ if __name__ == '__main__':
     print( cython_pelt.cbin_seg(stats_ts,10,2,method),time.time()-start)
     start = time.time()
     print(cython_pelt.cpelt(stats_ts_pelt,pen_*np.log(size_ts),minseg,size_ts-1,method),time.time()-start)
-   
+    start = time.time()
+    print(algo_changepoints.np_pelt(pd.DataFrame(time_series),pen_*np.log(size_ts),10),time.time()-start)
+    

@@ -11,20 +11,12 @@ ctypedef np.int64_t ITYPE_t
 from libc.math cimport sqrt
 cimport cost_function
 from cost_function cimport mll_mean, mll_var, mll_meanvar, mll_meanvar_exp, mll_meanvar_poisson, mbic_var, mbic_meanvar, mbic_mean, mbic_meanvar_exp, mbic_meanvar_poisson
+from cost_function cimport mll_nonparametric_ed, mll_nonparametric_ed_mbic
 
-@cython.wraparound(False)
-@cython.boundscheck(False)
+cimport utils
+from utils cimport order_vec
 
-def order_vec( np.ndarray[ITYPE_t, ndim=1] a, ITYPE_t n ):   
-    cdef ITYPE_t i,j
-    cdef ITYPE_t  t
-    for i in range(0,n):
-        for j in range(1,n-i):
-            if(a[j-1] > a[j]):
-                t = a[j-1]
-                a[j-1] = a[j]
-                a[j] = t
-    return a
+
 """
 def cpelt2 (np.ndarray[DTYPE_t, ndim=3] sumstat, double pen, int minseglen):
     cdef int n = sumstat.shape[0] 
@@ -82,7 +74,8 @@ def cpelt2 (np.ndarray[DTYPE_t, ndim=3] sumstat, double pen, int minseglen):
     changepoints = np.sort(changepoints)
     return changepoints
 """
-    
+@cython.wraparound(False)
+@cython.boundscheck(False)    
 def cpelt( np.ndarray[DTYPE_t, ndim=1] sumstat, double pen, int minseglen, int n, str method):
     #cdef int n = sumstat.shape[0] - 1
     cdef int error = 0
@@ -133,7 +126,7 @@ def cpelt( np.ndarray[DTYPE_t, ndim=1] sumstat, double pen, int minseglen, int n
     elif method == "mbic_meanvar_poisson":
         current_cost = mbic_meanvar_poisson
     else:
-        current_cost = mll_meanvar
+        current_cost = mbic_meanvar
     
     cdef int j
     for j in range(minseglen,2*minseglen):
@@ -238,7 +231,8 @@ def cbin_seg( np.ndarray[DTYPE_t, ndim=2] sumstat, ITYPE_t Q, ITYPE_t minseglen,
         likeout[q] =  min( oldmax,max_out)
         oldmax = likeout[q]
         tau_[q+2] = whichout
-        tau_ = order_vec(tau_,q+3)
+        #tau_ = order_vec(tau_,q+3)
+        order_vec(tau_,q+3)
 
     return np.array(cptsout)
 def optimal_partionning(np.ndarray[DTYPE_t, ndim=2] sumstat, int Q, int minseglen):
@@ -247,3 +241,79 @@ def optimal_partionning(np.ndarray[DTYPE_t, ndim=2] sumstat, int Q, int minsegle
     cdef int cp = np.zeros(Q)
     cdef int all_seg = np.zeros(2*20)
     return Q
+def cnp_pelt( np.ndarray[DTYPE_t, ndim=2] sumstat, double pen, int minseglen, int n, int nquantiles, str method):
+    #cdef int n = sumstat.shape[0] - 1
+    cdef int error = 0
+    cdef int nchecklist
+
+    cdef int [:] cptsout, lastchangecpts, checklist, tmpt, numchangecpts
+    a = np.zeros(n+1,dtype=np.intc)
+    cptsout = a
+    b = np.zeros(n+1,dtype=np.intc)
+
+    lastchangecpts = b
+    c= np.zeros(n+1,dtype=np.intc)
+    checklist = c
+    d = np.zeros(n+1,dtype=np.intc)
+    tmpt = d
+    e = np.zeros(n+1,dtype=np.intc)
+
+    numchangecpts = e
+    cdef double [:] lastchangelike, tmplike
+    zeros_array_double = np.zeros(n+1)
+    lastchangelike = zeros_array_double
+    zeros_array_double_2 = np.zeros(n+1)
+
+    tmplike = zeros_array_double_2
+    cdef int tstar, i, whichout, nchecktmp, j, isum
+    cdef double minout
+    lastchangelike[0] = -pen
+    lastchangecpts[0] = 0
+    numchangecpts[0] = 0
+    cdef np.ndarray[DTYPE_t, ndim=1] sumstatout = np.zeros(nquantiles)
+    if method =="nonparametric_ed":
+        current_cost = mll_nonparametric_ed
+    elif method == "mbic_nonparametric_ed":
+        current_cost = mll_nonparametric_ed_mbic
+    else:
+        current_cost = mll_nonparametric_ed_mbic
+    for j in range(minseglen,2*minseglen):
+        for isum in range(0,nquantiles):
+            sumstatout[isum]=sumstat[isum,j]-sumstat[isum,0]
+        lastchangelike[j] = current_cost(sumstatout,j,0,nquantiles,n)
+    for j in range(minseglen,2*minseglen):
+        numchangecpts[j] = 1
+    nchecklist = 2
+    checklist[0] = 0
+    checklist[1] = minseglen
+    for tstar in range(2*minseglen, n+1):
+        for i in range(0,nchecklist):
+            for isum in range(0,nquantiles):
+                sumstatout[isum]= sumstat[isum,tstar] - sumstat[isum,checklist[i]]
+            tmplike[i]=lastchangelike[checklist[i]] + current_cost(sumstatout, tstar, checklist[i], nquantiles, n)+pen
+        minout = tmplike[0]
+        whichout = 0
+        for i in range(1,nchecklist):
+            if tmplike[i]<= minout:
+                minout=tmplike[i]
+                whichout=i
+        lastchangelike[tstar]=minout
+        lastchangecpts[tstar]=checklist[whichout]
+        numchangecpts[tstar]=numchangecpts[lastchangecpts[tstar]]+1
+        nchecktmp=0
+        for i in range(0,nchecklist):
+            if(tmplike[i]<= (lastchangelike[tstar]+pen)):
+                checklist[nchecktmp]=checklist[i]
+                nchecktmp=nchecktmp+1
+        nchecklist = nchecktmp
+        checklist[nchecklist]=tstar-(minseglen-1)
+        nchecklist+=1
+
+
+    cdef int ncpts=0
+    cdef int last=n
+    while (last !=0):
+        cptsout[ncpts] = last
+        last=lastchangecpts[last]
+        ncpts+=1
+    return np.array(cptsout)[0:ncpts],ncpts
