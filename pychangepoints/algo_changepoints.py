@@ -1,6 +1,6 @@
 import numpy as np
-from .cython_pelt import cpelt, cbin_seg
-from .cython_pelt import cnp_pelt
+from .cython_pelt import cpelt, cbin_seg, cnp_pelt
+from .multiple_dim import cbin_seg_multiple, cpelt_multiple
 
 def nonpamametric_ed_sumstat( data, K=10):
     ts_data = data.ix[:,0]
@@ -28,7 +28,7 @@ def pelt(data, pen_, minseg, method):
     stats_ts_pelt = np.concatenate([stats_ts[:,0],stats_ts[:,1],stats_ts[:,2]])
     return  cpelt(stats_ts_pelt,pen_*np.log(size_ts),minseg,size_ts-1,method)
 
-def np_pelt(data, pen_, minseg=10,nquantiles=10, method="nonparametric_ed"):
+def np_pelt(data, pen_, minseg=10,nquantiles=10, method="mbic_nonparametric_ed"):
     times_series =data.values
     size_ts = times_series.shape[0]
     print(size_ts)
@@ -47,3 +47,27 @@ def binseg(data, Q, minseg, method):
     stats_ts[:,2] = ((times_series-mean)**2).cumsum()
 
     return cbin_seg( stats_ts, Q, minseg, method)
+def binseg_multiple(data, Q, minseg, method):
+    times_series =data.values
+    mean = np.mean(times_series,axis=0)
+    size_ts = times_series.shape[0]
+    dim_ts = times_series.shape[1]
+    stats_ts = np.zeros((size_ts,3,dim_ts))
+    stats_ts[:,0,:] = times_series.cumsum(axis=0)
+    stats_ts[:,1,:] = (times_series**2).cumsum(axis=0)
+    stats_ts[:,2,:] = ((times_series-mean)**2).cumsum(axis=0)
+    return cbin_seg_multiple( stats_ts, Q, minseg, method)
+def pelt_multiple(data, pen_, minseg, method):
+    times_series =data.values
+    size_ts = times_series.shape[0]
+
+    mean = np.mean(times_series,axis=0)
+    size_ts = times_series.shape[0]
+    print(size_ts)
+    print(mean)
+    dim_ts = times_series.shape[1]
+    stats_ts = np.zeros((size_ts,3,dim_ts))
+    stats_ts[:,0,:] = times_series.cumsum(axis=0)
+    stats_ts[:,1,:] = (times_series**2).cumsum(axis=0)
+    stats_ts[:,2,:] = ((times_series-mean)**2).cumsum(axis=0)
+    return  cpelt_multiple(stats_ts, pen_*np.log(size_ts), minseg, size_ts-1, method)

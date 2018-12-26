@@ -3,7 +3,7 @@ import time
 import pandas as pd
 from pychangepoints  import  cython_pelt, algo_changepoints
 if __name__ == '__main__':
-    size_ts = 1000
+    size_ts = 20000
     cpts_true = [0,100,800,size_ts]
     nb_seg = len(cpts_true)-1
     nb_cpts = nb_seg-1

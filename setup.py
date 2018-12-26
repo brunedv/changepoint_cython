@@ -6,7 +6,8 @@ from Cython.Build import cythonize, build_ext
 import numpy
 
 extensions = [Extension('pychangepoints.cython_pelt',['pychangepoints/pelt_cython.pyx','pychangepoints/cost_function.pxd'
-                                                       'pychangepoints/utils.pxd'])]
+                                                       'pychangepoints/utils.pxd']),
+             Extension('pychangepoints.multiple_dim',['pychangepoints/mutiple_algos.pyx','pychangepoints/cost_function_multiple.pxd'])]
 setup(
     name = 'changepoint_cython',
     version = '0.1',
