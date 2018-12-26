@@ -11,7 +11,7 @@ if __name__ == '__main__':
     mean=np.array([2,1,5])
     var=np.array([0.5,0.5,0.5])
 
-    method = "mll_mean"
+    method = "mbic_mean"
     pen_ = 10.0
     minseg = 2
     time_series=np.zeros((size_ts,3))

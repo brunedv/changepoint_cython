@@ -10,7 +10,7 @@ ctypedef np.int64_t ITYPE_t
 
 from libc.math cimport sqrt
 cimport cost_function_multiple
-from cost_function_multiple cimport mll_mean, order_vec
+from cost_function_multiple cimport mll_mean, mbic_mean, order_vec
 @cython.wraparound(False)
 @cython.boundscheck(False)  
 def cbin_seg_multiple( np.ndarray[DTYPE_t, ndim=3] sumstat, ITYPE_t Q, ITYPE_t minseglen, str method):
@@ -98,8 +98,11 @@ def cpelt_multiple( np.ndarray[DTYPE_t, ndim=3] sumstat, double pen, int minsegl
     numchangecpts[0] = 0
     if method =="mll_mean":
         current_cost = mll_mean
-    else:
-        current_cost = mll_mean
+    elif method =="mbic_mean":
+        current_cost = mbic_mean
+    else: 
+        current_cost = mbic_mean
+
     
     cdef int j, dim_, dim_1
     for j in range(minseglen,2*minseglen):
