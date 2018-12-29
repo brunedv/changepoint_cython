@@ -1,5 +1,5 @@
 import numpy as np
-from .cython_pelt import cpelt, cbin_seg, cnp_pelt
+from .cython_pelt import cpelt, cbin_seg, cnp_pelt, cseg_neigh
 from .multiple_dim import cbin_seg_multiple, cpelt_multiple
 
 def nonpamametric_ed_sumstat( data, K=10):
@@ -36,7 +36,16 @@ def np_pelt(data, pen_, minseg=10,nquantiles=10, method="mbic_nonparametric_ed")
     nquantiles_= int(2*np.log(size_ts))
     sumstat = nonpamametric_ed_sumstat(data,nquantiles_)
     return  cnp_pelt(sumstat, pen_,minseg,size_ts-1,nquantiles_,method_)
+def segneigh( data, Q, method):
+    times_series =data.values
+    mean = np.mean(times_series)
+    size_ts = times_series.shape[0]
+    stats_ts = np.zeros((size_ts,3))
+    stats_ts[:,0] = times_series.cumsum()
+    stats_ts[:,1] = (times_series**2).cumsum()
+    stats_ts[:,2] = ((times_series-mean)**2).cumsum()
 
+    return cseg_neigh( stats_ts, Q, method)
 def binseg(data, Q, minseg, method):
     times_series =data.values
     mean = np.mean(times_series)
