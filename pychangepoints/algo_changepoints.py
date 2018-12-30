@@ -2,6 +2,17 @@ import numpy as np
 from .cython_pelt import cpelt, cbin_seg,  cseg_neigh
 from .multiple_dim import cbin_seg_multiple, cpelt_multiple
 from .nonparametric import cnp_pelt
+
+from sklearn.decomposition import PCA
+import pandas as pd
+def multiple_preprocessing(df):
+    data_scale = df.sub(df.mean(0).values, axis=1).div(df.std(0).values, axis=1)
+    pca = PCA()
+    pca.fit(data_scale)
+    h = pca.transform(data_scale)
+    pca_frame = pd.DataFrame(h)
+    pca_frame_scale = pca_frame.sub(pca_frame.mean(0), axis=1).div(pca_frame.std(0), axis=1)
+    return pca_frame_scale
 def nonpamametric_ed_sumstat( data, K=10):
     ts_data = data.ix[:,0]
     n = len(ts_data)-1
@@ -57,7 +68,8 @@ def binseg(data, Q, minseg, method):
 
     return cbin_seg( stats_ts, Q, minseg, method)
 def binseg_multiple(data, Q, minseg, method):
-    times_series =data.values
+    data_process = multiple_preprocessing(data)
+    times_series =data_process.values
     mean = np.mean(times_series,axis=0)
     size_ts = times_series.shape[0]
     dim_ts = times_series.shape[1]
@@ -67,7 +79,8 @@ def binseg_multiple(data, Q, minseg, method):
     stats_ts[:,2,:] = ((times_series-mean)**2).cumsum(axis=0)
     return cbin_seg_multiple( stats_ts, Q, minseg, method)
 def pelt_multiple(data, pen_, minseg, method):
-    times_series =data.values
+    data_process = multiple_preprocessing(data)
+    times_series =data_process.values
     size_ts = times_series.shape[0]
 
     mean = np.mean(times_series,axis=0)
