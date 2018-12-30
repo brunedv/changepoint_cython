@@ -1,7 +1,7 @@
 import numpy as np
-from .cython_pelt import cpelt, cbin_seg, cnp_pelt, cseg_neigh
+from .cython_pelt import cpelt, cbin_seg,  cseg_neigh
 from .multiple_dim import cbin_seg_multiple, cpelt_multiple
-
+from .nonparametric import cnp_pelt
 def nonpamametric_ed_sumstat( data, K=10):
     ts_data = data.ix[:,0]
     n = len(ts_data)-1
