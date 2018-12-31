@@ -24,5 +24,7 @@ if __name__ == '__main__':
 
     print( "BinSeg",algo_changepoints.binseg_multiple(data,10,minseg,method),time.time()-start)
     print( "PELT",algo_changepoints.pelt_multiple(data,pen_,minseg,method),time.time()-start)
+    print( "SegNeigh",algo_changepoints.segneigh_multiple(data,10,method),time.time()-start)
+
     #print( algo_changepoints.pelt(data_0,1,10,method),time.time()-start)
 

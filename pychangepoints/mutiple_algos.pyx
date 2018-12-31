@@ -11,6 +11,8 @@ ctypedef np.int64_t ITYPE_t
 from libc.math cimport sqrt
 cimport cost_function_multiple
 from cost_function_multiple cimport mll_mean, mbic_mean, order_vec
+from cython.parallel import prange
+
 @cython.wraparound(False)
 @cython.boundscheck(False)  
 def cbin_seg_multiple( np.ndarray[DTYPE_t, ndim=3] sumstat, ITYPE_t Q, ITYPE_t minseglen, str method):
@@ -151,3 +153,54 @@ def cpelt_multiple( np.ndarray[DTYPE_t, ndim=3] sumstat, double pen, int minsegl
         last=lastchangecpts[last]
         ncpts+=1
     return np.array(cptsout)[0:ncpts],ncpts
+
+def cseg_neigh_multiple( np.ndarray[DTYPE_t, ndim=3] sumstat, ITYPE_t Q, str method):
+    cdef ITYPE_t n=sumstat.shape[0]
+    cdef np.ndarray[DTYPE_t, ndim=2] all_seg=np.zeros((n,n))
+    cdef int i, j, q, dim_
+    cdef DTYPE_t s
+    cdef ITYPE_t dim =sumstat.shape[2]
+
+    if method =="mll_mean":
+        current_cost = mll_mean
+    elif method =="mbic_mean":
+        current_cost = mbic_mean
+    else: 
+        current_cost = mbic_mean
+
+    for i in range(0,n) :
+        for j in prange(i,n,nogil=True):
+            all_seg[i,j]=0
+            for dim_ in range(0,dim):
+                all_seg[i,j] += -0.5*current_cost(sumstat[j,0,dim_]-sumstat[i,0,dim_],sumstat[j,1,dim_]-sumstat[i,1,dim_],sumstat[j,2,dim_]-sumstat[i,2,dim_] , j - i+1,dim)
+    cdef np.ndarray[DTYPE_t, ndim=2] like_q = np.zeros((Q,n))
+    like_q[0,:] = all_seg[0,:]
+    cdef  np.ndarray[ITYPE_t, ndim=2] cp = np.zeros((Q,n),dtype=np.int64)
+    cdef DTYPE_t max_out =-np.inf
+    cdef ITYPE_t max_which
+    cdef np.ndarray[DTYPE_t, ndim=1] like
+
+    for q in range(1,Q):
+        for j in range(q,n):
+            like = like_q[q-1,(q-1):(j-1)]+all_seg[q:j,j]
+            max_which = 0
+            max_out =-np.inf
+            for i in range(0,j-q):
+                if  max_out <=like[i]:
+                    max_out = like[i]
+                    max_which = i
+            #print(max_out,max_which)
+
+            like_q[q,j] = max_out
+            cp[q,j] = max_which + q
+    cdef  np.ndarray[ITYPE_t, ndim=2] cps_Q = np.zeros((Q,Q),dtype=np.int64)
+    for q in range(1,Q):
+        cps_Q[q,0]=cp[q,n-1]
+        for i in range(0,q):
+            cps_Q[q,i+1]=cp[q-i-1,cps_Q[q,i]]
+  
+    criterium = -2 * like_q[:,n-2]
+    op_cps = np.argmin(criterium)
+    cpts = np.sort(cps_Q[op_cps, :][cps_Q[op_cps, :] > 0])
+  
+    return cpts

@@ -1,6 +1,6 @@
 import numpy as np
 from .cython_pelt import cpelt, cbin_seg,  cseg_neigh
-from .multiple_dim import cbin_seg_multiple, cpelt_multiple
+from .multiple_dim import cbin_seg_multiple, cpelt_multiple, cseg_neigh_multiple
 from .nonparametric import cnp_pelt
 
 from sklearn.decomposition import PCA
@@ -29,7 +29,6 @@ def nonpamametric_ed_sumstat( data, K=10):
 def pelt(data, pen_, minseg, method):
     times_series =data.values
     size_ts = times_series.shape[0]
-    print(size_ts)
     stats_ts = np.zeros((size_ts,3))
     mean = np.mean(times_series)
     stats_ts[:,0] = times_series.cumsum()
@@ -42,7 +41,6 @@ def pelt(data, pen_, minseg, method):
 def np_pelt(data, pen_, minseg=10,nquantiles=10, method="mbic_nonparametric_ed"):
     times_series =data.values
     size_ts = times_series.shape[0]
-    print(size_ts)
     method_=method
     nquantiles_= int(2*np.log(size_ts))
     sumstat = nonpamametric_ed_sumstat(data,nquantiles_)
@@ -85,11 +83,22 @@ def pelt_multiple(data, pen_, minseg, method):
 
     mean = np.mean(times_series,axis=0)
     size_ts = times_series.shape[0]
-    print(size_ts)
-    print(mean)
     dim_ts = times_series.shape[1]
     stats_ts = np.zeros((size_ts,3,dim_ts))
     stats_ts[:,0,:] = times_series.cumsum(axis=0)
     stats_ts[:,1,:] = (times_series**2).cumsum(axis=0)
     stats_ts[:,2,:] = ((times_series-mean)**2).cumsum(axis=0)
     return  cpelt_multiple(stats_ts, pen_*np.log(size_ts), minseg, size_ts-1, method)
+def segneigh_multiple( data, Q, method):
+    data_process = multiple_preprocessing(data)
+    times_series =data_process.values
+    size_ts = times_series.shape[0]
+
+    mean = np.mean(times_series,axis=0)
+    size_ts = times_series.shape[0]
+    dim_ts = times_series.shape[1]
+    stats_ts = np.zeros((size_ts,3,dim_ts))
+    stats_ts[:,0,:] = times_series.cumsum(axis=0)
+    stats_ts[:,1,:] = (times_series**2).cumsum(axis=0)
+    stats_ts[:,2,:] = ((times_series-mean)**2).cumsum(axis=0)
+    return cseg_neigh_multiple( stats_ts, Q, method)

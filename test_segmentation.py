@@ -3,14 +3,14 @@ import time
 import pandas as pd
 from pychangepoints  import  cython_pelt, algo_changepoints
 if __name__ == '__main__':
-    size_ts = 5000
+    size_ts = 20000
     cpts_true = [0,100,800,size_ts]
     nb_seg = len(cpts_true)-1
     nb_cpts = nb_seg-1
-    mean=np.array([2,1,5])
-    var=np.array([0.5,0.2,0.01])
+    mean=np.array([10,1,5])
+    var=np.array([0.5,0.5,0.5])
 
-    method = "mbic_meanvar"
+    method = "mbic_mean"
     pen_ = 10.0
     minseg = 2
     time_series=np.zeros(size_ts)
@@ -35,4 +35,4 @@ if __name__ == '__main__':
     start = time.time()
     print("NPPELT",algo_changepoints.np_pelt(pd.DataFrame(time_series),pen_*np.log(size_ts),10),time.time()-start)
     start = time.time()
-    print("Segneigh", algo_changepoints.segneigh(pd.DataFrame(time_series),3,method),time.time()-start)
+    print("Segneigh", algo_changepoints.segneigh(pd.DataFrame(time_series),10,method),time.time()-start)

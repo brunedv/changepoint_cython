@@ -13,9 +13,9 @@ from libc.math cimport sqrt, log, M_PI, fmax, isnan
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cdef inline DTYPE_t mll_mean( DTYPE_t x , DTYPE_t x2, DTYPE_t x3, ITYPE_t n, ITYPE_t dim):
+cdef inline DTYPE_t mll_mean( DTYPE_t x , DTYPE_t x2, DTYPE_t x3, ITYPE_t n, ITYPE_t dim) nogil:
     return (x2-(x*x)*1/(n))
-cdef inline DTYPE_t mbic_mean( DTYPE_t x , DTYPE_t x2, DTYPE_t x3, ITYPE_t n, ITYPE_t dim):
+cdef inline DTYPE_t mbic_mean( DTYPE_t x , DTYPE_t x2, DTYPE_t x3, ITYPE_t n, ITYPE_t dim) nogil:
     return (x2-(x*x)*1/(n)+log(n))
 cdef inline DTYPE_t mll_mean_vect( np.ndarray[DTYPE_t, ndim=1] x , np.ndarray[DTYPE_t, ndim=1] x2, np.ndarray[DTYPE_t, ndim=1] x3, ITYPE_t n, ITYPE_t dim):
     cdef DTYPE_t cost =0
