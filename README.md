@@ -16,8 +16,10 @@ Model implemented for the multivariate case :
 
 Working on Windows/Linux and python3.6
 ## Install
-Download and run at the folder:
+Download and run:
+```shell
 pip3 install .
+```
 ## Tests 
 Synthetic examples
 ```shell
