@@ -15,9 +15,11 @@ Model implemented for the multivariate case :
 
 
 Working on Windows/Linux and python3.6
-## install
-pip3 install -e .
-## Test file
+## Install
+Download and run at the folder:
+pip3 install .
+## Tests 
+Synthetic examples
 ```shell
 
 python3 test_segmentation.py
