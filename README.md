@@ -10,14 +10,14 @@ pip3 install -e .
 python3 test_segmentation.py
 python3 test_segmentation_multiple.py
 ## Test on well bore data see (notebook)
-```
+```python
 import pandas as pd
 import numpy as np
 import lasio
 from pychangepoints import cython_pelt, algo_changepoints
 ```
 Loading and cleaning data
-```
+```python
 well_log_las = lasio.read('./data/2120913D.las')
 well_log_df = well_log_las.df()
 
