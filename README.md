@@ -1,7 +1,15 @@
 # changepoint_cython
 A cython version of the changepoint and  changepoint.np R package, see https://github.com/cran/changepoint and https://github.com/cran/changepoint.np.
 
-Implemented algorithms:  Binary Segmentation, PELT, Non parametric PELT, Segmentation Neigborhood.
+Implemented algorithms:
+- Binary Segmentation, PELT, and Segmentation Neigborhood: monovariate and multivariate time series.
+- Non parametric PELT: monovariate variate.
+
+Model implemented for the monovariate case:
+- Normal
+- Poisson
+- Exponential
+
 
 Working on Windows/Linux and python3.6
 ## install
@@ -39,6 +47,6 @@ Segmentation with PELT for multivariate time series.
 penalty_value = 5
 min_segment_size = 20
 model = 'mbic_mean'
-list_cpts,nb_cpts=algo_changepoints.pelt_multiple(well_log_data,penalty_value, min_segment_size, model)
+list_cpts, nb_cpts = algo_changepoints.pelt_multiple(well_log_data,penalty_value, min_segment_size, model)
 ```
 ![Results of the segmentation](https://github.com/brunedv/changepoint_cython/blob/master/data/segmentation.png)
