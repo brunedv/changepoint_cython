@@ -8,3 +8,7 @@ Working on Windows/Linux and python3.6
 pip3 install -e .
 ## Test file
 python3 test_segmentation.py
+
+```
+well_log_las = lasio.read('./data/2120913D.las')
+```
