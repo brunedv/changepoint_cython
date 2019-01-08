@@ -5,10 +5,13 @@ Implemented algorithms:
 - Binary Segmentation, PELT, and Segmentation Neigborhood: monovariate and multivariate time series.
 - Non parametric PELT: monovariate variate.
 
-Model implemented for the monovariate case:
-- Normal
-- Poisson
-- Exponential
+Model implemented for the monovariate case :
+- Normal (mean, variance, or mean and variance).
+- Poisson (mean and variance).
+- Exponential (mean and variance).
+
+Model implemented for the multivariate case :
+- Normal (mean).
 
 
 Working on Windows/Linux and python3.6
