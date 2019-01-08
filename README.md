@@ -10,7 +10,7 @@ pip3 install -e .
 python3 test_segmentation.py
 python3 test_segmentation_multiple.py
 ## Test on well bore data 
-See notebook segmentation example on well log data
+See notebook "segmentation example on well log data.ipynb"
 ```python
 import pandas as pd
 import numpy as np
