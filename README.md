@@ -8,6 +8,7 @@ Working on Windows/Linux and python3.6
 pip3 install -e .
 ## Test file
 python3 test_segmentation.py
+
 python3 test_segmentation_multiple.py
 ## Test on well bore data 
 See notebook "segmentation example on well log data.ipynb"
