@@ -37,4 +37,4 @@ min_segment_size = 20
 model = 'mbic_mean'
 list_cpts,nb_cpts=algo_changepoints.pelt_multiple(well_log_data,penalty_value, min_segment_size, model)
 ```
-![Results of the segmentation](link-to-image)
+![Results of the segmentation](https://github.com/brunedv/changepoint_cython/blob/master/data/segmentation.png)
