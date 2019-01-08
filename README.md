@@ -29,7 +29,7 @@ well_log_data = well_log_data[well_log_data>-1]
 well_log_data.dropna(inplace=True)
 well_log_data = well_log_data[well_log_data.index>6542]
 ```
-Segmentation 
+Segmentation with PELT for multivariate time series.
 
 ```python
 penalty_value = 5
