@@ -118,9 +118,8 @@ Inputs:
 - min_segment_size: int, minimum segment size,
 - statistical model, str (see cost_function.pxd).
 
-Outputs:
+Output:
 - array of the postion of the change-points,
-- number of chnagepoint.
 
 Usage:
 ```python
@@ -128,7 +127,7 @@ from pychangepoints import algo_changepoints
 Q = 5
 min_segment_size = 20
 model = 'mbic_mean'
-list_cpts, nb_cpts = algo_changepoints.binseg(data, Q, minseg, method)
+list_cpts = algo_changepoints.binseg(data, Q, minseg, method)
 ```
 For the multivariate case, call binseg_multiple:
 ```python
@@ -136,7 +135,7 @@ from pychangepoints import algo_changepoints
 Q = 5
 min_segment_size = 20
 model = 'mbic_mean'
-list_cpts, nb_cpts = algo_changepoints.binseg_multiple(data, Q, minseg, method)
+list_cpts = algo_changepoints.binseg_multiple(data, Q, minseg, method)
 ```
 ### Segmentation neighborhood
 Inputs:
@@ -144,21 +143,20 @@ Inputs:
 - Q: int, number of changepoints,
 - statistical model, str (see cost_function.pxd).
 
-Outputs:
+Output:
 - array of the postion of the change-points,
-- number of chnagepoint.
 
 Usage:
 ```python
 from pychangepoints import algo_changepoints
 Q = 5
 model = 'mbic_mean'
-list_cpts, nb_cpts = algo_changepoints.segneigh(data, Q, minseg, method)
+list_cpts = algo_changepoints.segneigh(data, Q, minseg, method)
 ```
 For the multivariate case, call segneigh_multiple:
 ```python
 from pychangepoints import algo_changepoints
 Q = 5
 model = 'mbic_mean'
-list_cpts, nb_cpts = algo_changepoints.segneigh_multiple(data, Q, method)
+list_cpts = algo_changepoints.segneigh_multiple(data, Q, method)
 ```
