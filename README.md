@@ -61,10 +61,96 @@ list_cpts, nb_cpts = algo_changepoints.pelt_multiple(well_log_data,penalty_value
 ## Documentation
 
 ### PELT
+Inputs:
+- data: data as pandas dataframe,
+- penalty_value: double, penalty value, (BIC penalty),
+- min_segment_size: int, minimum segment size,
+- model: str, statistical model (see cost_function.pxd).
+Outputs:
+- list_cpts: array of the postion of the change-points,
+- nb_cpts: number of chnagepoint.
+Usage:
+```python
+from pychangepoints import algo_changepoints
 
+penalty_value = 5
+min_segment_size = 20
+model = 'mbic_mean'
+list_cpts, nb_cpts = algo_changepoints.pelt(data,penalty_value, min_segment_size, model)
+```
+For the multivariate case, call pelt_multiple:
+```python
+from pychangepoints import algo_changepoints
+
+penalty_value = 5
+min_segment_size = 20
+model = 'mbic_mean'
+list_cpts, nb_cpts = algo_changepoints.pelt_multiple(data,penalty_value, min_segment_size, model)
+```
 ### NP PELT
+Inputs:
+- data: as pandas dataframe,
+- penalty_value: double, penalty value, (BIC penalty),
+- min_segment_size: int, minimum segment size,
+- nquantiles: int, number of quantiles,
+- method: str, cost functioon (optional, only one implemented).
+Outputs:
+- list_cpts, array of the postion of the change-points
+- nb_cpts, number of chnagepoint.
+Usage:
+```python
+from pychangepoints import algo_changepoints
 
+penalty_value = 5
+min_segment_size = 20
+model = 'mbic_nonparametric_ed'
+nquantiles = 10
+list_cpts, nb_cpts = algo_changepoints.np_pelt(data, penalty_value, min_segment_size,nquantiles, method = model)
+```
 ### Binary Segmentation
-
+Inputs:
+- data: pandas dataframe,
+- Q: int, number of changepoints,
+- min_segment_size: int, minimum segment size,
+- statistical model, str (see cost_function.pxd).
+Outputs:
+- array of the postion of the change-points,
+- number of chnagepoint.
+Usage:
+```python
+from pychangepoints import algo_changepoints
+Q = 5
+min_segment_size = 20
+model = 'mbic_mean'
+list_cpts, nb_cpts = algo_changepoints.binseg(data, Q, minseg, method)
+```
+For the multivariate case, call binseg_multiple:
+```python
+from pychangepoints import algo_changepoints
+Q = 5
+min_segment_size = 20
+model = 'mbic_mean'
+list_cpts, nb_cpts = algo_changepoints.binseg_multiple(data, Q, minseg, method)
+```
 ### Segmentation neighborhood
-
+Inputs:
+- data: pandas dataframe,
+- Q: int, number of changepoints,
+- statistical model, str (see cost_function.pxd).
+Outputs:
+- array of the postion of the change-points,
+- number of chnagepoint.
+Usage:
+```python
+from pychangepoints import algo_changepoints
+Q = 5
+model = 'mbic_mean'
+list_cpts, nb_cpts = algo_changepoints.segneigh(data, Q, minseg, method)
+```
+For the multivariate case, call segneigh_multiple:
+```python
+from pychangepoints import algo_changepoints
+Q = 5
+model = 'mbic_mean'
+list_cpts, nb_cpts = algo_changepoints.segneigh_multiple(data, Q, method)
+```
