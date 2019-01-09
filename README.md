@@ -151,7 +151,7 @@ Usage:
 from pychangepoints import algo_changepoints
 Q = 5
 model = 'mbic_mean'
-list_cpts = algo_changepoints.segneigh(data, Q, minseg, method)
+list_cpts = algo_changepoints.segneigh(data, Q, method)
 ```
 For the multivariate case, call segneigh_multiple:
 ```python
