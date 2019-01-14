@@ -3,7 +3,7 @@ import time
 import pandas as pd
 from pychangepoints  import  cython_pelt, algo_changepoints
 if __name__ == '__main__':
-    size_ts = 5000
+    size_ts = 1000
     cpts_true = [0,400,800,size_ts]
     nb_seg = len(cpts_true)-1
     nb_cpts = nb_seg-1
@@ -11,7 +11,7 @@ if __name__ == '__main__':
     var=np.array([0.5,0.5,0.5])
 
     method = "mbic_mean"
-    pen_ = 10
+    pen_ = 5
     minseg = 10
     time_series=np.zeros(size_ts)
 

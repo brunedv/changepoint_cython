@@ -71,34 +71,33 @@ def binseg_multiple(data, Q, minseg, method):
     mean = np.mean(times_series,axis=0)
     size_ts = times_series.shape[0]
     dim_ts = times_series.shape[1]
-    stats_ts = np.zeros((size_ts,3,dim_ts))
-    stats_ts[:,0,:] = times_series.cumsum(axis=0)
-    stats_ts[:,1,:] = (times_series**2).cumsum(axis=0)
-    stats_ts[:,2,:] = ((times_series-mean)**2).cumsum(axis=0)
+    stats_ts = np.zeros((size_ts+1,3,dim_ts))
+    zeros = np.zeros(dim_ts)
+    stats_ts[:,0,:] = np.insert(times_series.cumsum(axis=0), 0, zeros, axis=0)
+    stats_ts[:,1,:] = np.insert((times_series**2).cumsum(axis=0), 0, zeros, axis=0)
+    stats_ts[:,2,:] = np.insert(((times_series-mean)**2).cumsum(axis=0),0, zeros, axis=0)
     return cbin_seg_multiple( stats_ts, Q, minseg, method)
 def pelt_multiple(data, pen_, minseg, method):
     data_process = multiple_preprocessing(data)
     times_series =data_process.values
-    size_ts = times_series.shape[0]
-
     mean = np.mean(times_series,axis=0)
     size_ts = times_series.shape[0]
     dim_ts = times_series.shape[1]
-    stats_ts = np.zeros((size_ts,3,dim_ts))
-    stats_ts[:,0,:] = times_series.cumsum(axis=0)
-    stats_ts[:,1,:] = (times_series**2).cumsum(axis=0)
-    stats_ts[:,2,:] = ((times_series-mean)**2).cumsum(axis=0)
-    return  cpelt_multiple(stats_ts, pen_*np.log(size_ts), minseg, size_ts-1, method)
+    stats_ts = np.zeros((size_ts+1,3,dim_ts))
+    zeros = np.zeros(dim_ts)
+    stats_ts[:,0,:] = np.insert(times_series.cumsum(axis=0), 0, zeros, axis=0)
+    stats_ts[:,1,:] = np.insert((times_series**2).cumsum(axis=0), 0, zeros, axis=0)
+    stats_ts[:,2,:] = np.insert(((times_series-mean)**2).cumsum(axis=0),0, zeros, axis=0)
+    return  cpelt_multiple(stats_ts, pen_*np.log(size_ts), minseg, size_ts, method)
 def segneigh_multiple( data, Q, method):
     data_process = multiple_preprocessing(data)
     times_series =data_process.values
-    size_ts = times_series.shape[0]
-
     mean = np.mean(times_series,axis=0)
     size_ts = times_series.shape[0]
     dim_ts = times_series.shape[1]
-    stats_ts = np.zeros((size_ts,3,dim_ts))
-    stats_ts[:,0,:] = times_series.cumsum(axis=0)
-    stats_ts[:,1,:] = (times_series**2).cumsum(axis=0)
-    stats_ts[:,2,:] = ((times_series-mean)**2).cumsum(axis=0)
+    stats_ts = np.zeros((size_ts+1,3,dim_ts))
+    zeros = np.zeros(dim_ts)
+    stats_ts[:,0,:] = np.insert(times_series.cumsum(axis=0), 0, zeros, axis=0)
+    stats_ts[:,1,:] = np.insert((times_series**2).cumsum(axis=0), 0, zeros, axis=0)
+    stats_ts[:,2,:] = np.insert(((times_series-mean)**2).cumsum(axis=0),0, zeros, axis=0)
     return cseg_neigh_multiple( stats_ts, Q, method)
