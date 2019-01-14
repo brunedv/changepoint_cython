@@ -133,6 +133,8 @@ def cpelt( np.ndarray[DTYPE_t, ndim=1] sumstat, double pen, int minseglen, int n
         lastchangelike[j] = current_cost(sumstat[j],sumstat[j+n+1],sumstat[j+2*(n+1)],j)
     for j in range(minseglen,2*minseglen):
         numchangecpts[j] = 1
+    for j in range(minseglen,2*minseglen):
+        lastchangecpts[j] = 1
     cdef DTYPE_t a1 , a2, a3
 
     nchecklist = 2
@@ -140,14 +142,14 @@ def cpelt( np.ndarray[DTYPE_t, ndim=1] sumstat, double pen, int minseglen, int n
     checklist[1] = minseglen
     for tstar in range(2*minseglen, n+1):
         if lastchangelike[tstar]==0:
-            for i in range(0,nchecklist):
+            for i in range(0,nchecklist+1):
                 a1 = sumstat[tstar]-sumstat[checklist[i]]
                 a2 = sumstat[tstar+n+1]-sumstat[checklist[i]+n+1]
                 a3 = sumstat[tstar+2*(n+1)]-sumstat[checklist[i]+2*(n+1)]
                 tmplike[i]=lastchangelike[checklist[i]] + current_cost(a1,a2,a3, tstar-checklist[i])+pen
             minout = tmplike[0]
             whichout = 0
-            for i in range(1,nchecklist):
+            for i in range(0,nchecklist):
                 if tmplike[i]<= minout:
                     minout=tmplike[i]
                     whichout=i
@@ -169,10 +171,11 @@ def cpelt( np.ndarray[DTYPE_t, ndim=1] sumstat, double pen, int minseglen, int n
         cptsout[ncpts] = last
         last=lastchangecpts[last]
         ncpts+=1
-    return np.array(cptsout)[0:ncpts],ncpts
+    return np.array(cptsout)[0:(ncpts)],ncpts
 
 
-                                  
+@cython.wraparound(False)
+@cython.boundscheck(False)                                   
 def cbin_seg( np.ndarray[DTYPE_t, ndim=2] sumstat, ITYPE_t Q, ITYPE_t minseglen, str method):
     cdef ITYPE_t n = sumstat.shape[0] - 1
     cdef np.ndarray[ITYPE_t, ndim=1] cptsout = np.zeros(Q,dtype=np.int64)
@@ -237,7 +240,8 @@ def cbin_seg( np.ndarray[DTYPE_t, ndim=2] sumstat, ITYPE_t Q, ITYPE_t minseglen,
     return np.array(cptsout)
 
 
-
+@cython.wraparound(False)
+@cython.boundscheck(False) 
 def cseg_neigh( np.ndarray[DTYPE_t, ndim=2] sumstat, ITYPE_t Q, str method):
     cdef ITYPE_t n=sumstat.shape[0]
     cdef np.ndarray[DTYPE_t, ndim=2] all_seg=np.zeros((n,n))

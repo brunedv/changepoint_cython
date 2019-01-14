@@ -28,15 +28,15 @@ def nonpamametric_ed_sumstat( data, K=10):
     return Q
 def pelt(data, pen_, minseg, method):
     times_series =data.values
-    size_ts = times_series.shape[0]
-    stats_ts = np.zeros((size_ts,3))
+    size_ts = len(data.index)
+    stats_ts = np.zeros((size_ts+1,3))
     mean = np.mean(times_series)
-    stats_ts[:,0] = times_series.cumsum()
-    stats_ts[:,1] = (times_series**2).cumsum()
-    stats_ts[:,2] = ((times_series-mean)**2).cumsum()
+    stats_ts[:,0] = np.append(0,times_series.cumsum())
+    stats_ts[:,1] = np.append(0,(times_series**2).cumsum())
+    stats_ts[:,2] = np.append(0,((times_series-mean)**2).cumsum())
 
     stats_ts_pelt = np.concatenate([stats_ts[:,0],stats_ts[:,1],stats_ts[:,2]])
-    return  cpelt(stats_ts_pelt,pen_*np.log(size_ts),minseg,size_ts-1,method)
+    return  cpelt(stats_ts_pelt,pen_*np.log(size_ts),minseg,size_ts,method)
 
 def np_pelt(data, pen_, minseg=10,nquantiles=10, method="mbic_nonparametric_ed"):
     times_series =data.values
@@ -49,20 +49,20 @@ def segneigh( data, Q, method):
     times_series =data.values
     mean = np.mean(times_series)
     size_ts = times_series.shape[0]
-    stats_ts = np.zeros((size_ts,3))
-    stats_ts[:,0] = times_series.cumsum()
-    stats_ts[:,1] = (times_series**2).cumsum()
-    stats_ts[:,2] = ((times_series-mean)**2).cumsum()
+    stats_ts = np.zeros((size_ts+1,3))
+    stats_ts[:,0] = np.append(0,times_series.cumsum())
+    stats_ts[:,1] = np.append(0,(times_series**2).cumsum())
+    stats_ts[:,2] = np.append(0,((times_series-mean)**2).cumsum())
 
     return cseg_neigh( stats_ts, Q, method)
 def binseg(data, Q, minseg, method):
     times_series =data.values
     mean = np.mean(times_series)
     size_ts = times_series.shape[0]
-    stats_ts = np.zeros((size_ts,3))
-    stats_ts[:,0] = times_series.cumsum()
-    stats_ts[:,1] = (times_series**2).cumsum()
-    stats_ts[:,2] = ((times_series-mean)**2).cumsum()
+    stats_ts = np.zeros((size_ts+1,3))
+    stats_ts[:,0] = np.append(0,times_series.cumsum())
+    stats_ts[:,1] = np.append(0,(times_series**2).cumsum())
+    stats_ts[:,2] = np.append(0,((times_series-mean)**2).cumsum())
 
     return cbin_seg( stats_ts, Q, minseg, method)
 def binseg_multiple(data, Q, minseg, method):

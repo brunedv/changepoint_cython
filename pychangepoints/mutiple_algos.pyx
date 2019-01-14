@@ -67,7 +67,8 @@ def cbin_seg_multiple( np.ndarray[DTYPE_t, ndim=3] sumstat, ITYPE_t Q, ITYPE_t m
         order_vec(tau_,q+3)
 
     return np.array(cptsout)
-
+@cython.wraparound(False)
+@cython.boundscheck(False) 
 def cpelt_multiple( np.ndarray[DTYPE_t, ndim=3] sumstat, double pen, int minseglen, int n, str method):
     #cdef int n = sumstat.shape[0] - 1
     cdef int error = 0
@@ -153,7 +154,8 @@ def cpelt_multiple( np.ndarray[DTYPE_t, ndim=3] sumstat, double pen, int minsegl
         last=lastchangecpts[last]
         ncpts+=1
     return np.array(cptsout)[0:ncpts],ncpts
-
+@cython.wraparound(False)
+@cython.boundscheck(False) 
 def cseg_neigh_multiple( np.ndarray[DTYPE_t, ndim=3] sumstat, ITYPE_t Q, str method):
     cdef ITYPE_t n=sumstat.shape[0]
     cdef np.ndarray[DTYPE_t, ndim=2] all_seg=np.zeros((n,n))
