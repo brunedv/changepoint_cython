@@ -14,7 +14,7 @@ setup(
     name = 'changepoint_cython',
     version = '0.1',
     author = 'Vianney Bruned',
-    install_requires = ['Cython','numpy','pandas'],
+    install_requires = ['Cython','numpy','pandas','scikit-learn'],
     packages = ["pychangepoints"],
     include_package_data=True,
     ext_modules = cythonize( extensions ),
