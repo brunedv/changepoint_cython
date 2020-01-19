@@ -3,11 +3,6 @@ cimport numpy as np
 import math 
 cimport cython
 
-DTYPE = np.float64
-ITYPE = np.int64
-ctypedef np.float64_t DTYPE_t
-ctypedef np.int64_t ITYPE_t
-
 from libc.math cimport sqrt, log, M_PI, fmax, isnan
 cimport cost_function
 from cost_function cimport mll_mean, mll_var, mll_meanvar, mll_meanvar_exp, mll_meanvar_poisson, mbic_var, mbic_meanvar, mbic_mean, mbic_meanvar_exp, mbic_meanvar_poisson
@@ -16,6 +11,13 @@ from cost_function cimport mll_nonparametric_ed, mll_nonparametric_ed_mbic
 cimport utils
 from utils cimport order_vec
 from cython.parallel import prange
+
+
+DTYPE = np.float64
+ITYPE = np.int64
+ctypedef np.float64_t DTYPE_t
+ctypedef np.int64_t ITYPE_t
+
 
 """
 def cpelt2 (np.ndarray[DTYPE_t, ndim=3] sumstat, double pen, int minseglen):
@@ -76,22 +78,22 @@ def cpelt2 (np.ndarray[DTYPE_t, ndim=3] sumstat, double pen, int minseglen):
 """
 @cython.wraparound(False)
 @cython.boundscheck(False)    
-def cpelt( np.ndarray[DTYPE_t, ndim=1] sumstat, double pen, int minseglen, int n, str method):
+def cpelt(np.ndarray[DTYPE_t, ndim=1] sumstat, double pen, int minseglen, int n, str method):
     #cdef int n = sumstat.shape[0] - 1
     cdef int error = 0
     cdef int nchecklist
 
     cdef int [:] cptsout, lastchangecpts, checklist, tmpt, numchangecpts
-    a = np.zeros(n+1,dtype=np.intc)
+    a = np.zeros(n+1, dtype=np.intc)
     cptsout = a
-    b = np.zeros(n+1,dtype=np.intc)
+    b = np.zeros(n+1, dtype=np.intc)
 
     lastchangecpts = b
-    c= np.zeros(n+1,dtype=np.intc)
+    c= np.zeros(n+1, dtype=np.intc)
     checklist = c
-    d = np.zeros(n+1,dtype=np.intc)
+    d = np.zeros(n+1, dtype=np.intc)
     tmpt = d
-    e = np.zeros(n+1,dtype=np.intc)
+    e = np.zeros(n+1, dtype=np.intc)
 
     numchangecpts = e
     cdef double [:] lastchangelike, tmplike
@@ -100,12 +102,12 @@ def cpelt( np.ndarray[DTYPE_t, ndim=1] sumstat, double pen, int minseglen, int n
     zeros_array_double_2 = np.zeros(n+1)
 
     tmplike = zeros_array_double_2
-    cdef int tstar,i,whichout,nchecktmp
+    cdef int tstar, i, whichout, nchecktmp
     cdef double minout
     lastchangelike[0] = -pen
     lastchangecpts[0] = 0
     numchangecpts[0] = 0
-    if method =="mll_mean":
+    if method == "mll_mean":
         current_cost = mll_mean
     elif method == "mll_var":
         current_cost = mll_var
@@ -129,11 +131,11 @@ def cpelt( np.ndarray[DTYPE_t, ndim=1] sumstat, double pen, int minseglen, int n
         current_cost = mbic_meanvar
     
     cdef int j
-    for j in range(minseglen,2*minseglen):
-        lastchangelike[j] = current_cost(sumstat[j],sumstat[j+n+1],sumstat[j+2*(n+1)],j)
-    for j in range(minseglen,2*minseglen):
+    for j in range(minseglen, 2*minseglen):
+        lastchangelike[j] = current_cost(sumstat[j], sumstat[j+n+1], sumstat[j+2*(n+1)], j)
+    for j in range(minseglen, 2*minseglen):
         numchangecpts[j] = 1
-    for j in range(minseglen,2*minseglen):
+    for j in range(minseglen, 2*minseglen):
         lastchangecpts[j] = 1
     cdef DTYPE_t a1 , a2, a3
 
@@ -141,44 +143,44 @@ def cpelt( np.ndarray[DTYPE_t, ndim=1] sumstat, double pen, int minseglen, int n
     checklist[0] = 0
     checklist[1] = minseglen
     for tstar in range(2*minseglen, n+1):
-        if lastchangelike[tstar]==0:
-            for i in range(0,nchecklist+1):
+        if lastchangelike[tstar] == 0:
+            for i in range(0, nchecklist+1):
                 a1 = sumstat[tstar]-sumstat[checklist[i]]
                 a2 = sumstat[tstar+n+1]-sumstat[checklist[i]+n+1]
                 a3 = sumstat[tstar+2*(n+1)]-sumstat[checklist[i]+2*(n+1)]
-                tmplike[i]=lastchangelike[checklist[i]] + current_cost(a1,a2,a3, tstar-checklist[i])+pen
+                tmplike[i] = lastchangelike[checklist[i]] + current_cost(a1, a2, a3, tstar-checklist[i])+pen
             minout = tmplike[0]
             whichout = 0
-            for i in range(0,nchecklist):
-                if tmplike[i]<= minout:
-                    minout=tmplike[i]
-                    whichout=i
-            lastchangelike[tstar]=minout
-            lastchangecpts[tstar]=checklist[whichout]
-            numchangecpts[tstar]=numchangecpts[lastchangecpts[tstar]]+1
-            nchecktmp=0
-            for i in range(0,nchecklist):
-                if(tmplike[i]<= (lastchangelike[tstar]+pen)):
-                    checklist[nchecktmp]=checklist[i]
-                    nchecktmp=nchecktmp+1
+            for i in range(0, nchecklist):
+                if tmplike[i] <= minout:
+                    minout = tmplike[i]
+                    whichout = i
+            lastchangelike[tstar] = minout
+            lastchangecpts[tstar] = checklist[whichout]
+            numchangecpts[tstar] = numchangecpts[lastchangecpts[tstar]]+1
+            nchecktmp = 0
+            for i in range(0, nchecklist):
+                if(tmplike[i] <= (lastchangelike[tstar]+pen)):
+                    checklist[nchecktmp] = checklist[i]
+                    nchecktmp = nchecktmp+1
             nchecklist = nchecktmp
-        checklist[nchecklist]=tstar-(minseglen-1)
-        nchecklist+=1
+        checklist[nchecklist] = tstar-(minseglen-1)
+        nchecklist += 1
 
-    cdef int ncpts=0
-    cdef int last=n
-    while (last !=0):
+    cdef int ncpts = 0
+    cdef int last = n
+    while (last != 0):
         cptsout[ncpts] = last
-        last=lastchangecpts[last]
-        ncpts+=1
-    return np.array(cptsout)[0:(ncpts)],ncpts
+        last = lastchangecpts[last]
+        ncpts += 1
+    return np.array(cptsout)[0:(ncpts)], ncpts
 
 
 @cython.wraparound(False)
 @cython.boundscheck(False)                                   
-def cbin_seg( np.ndarray[DTYPE_t, ndim=2] sumstat, ITYPE_t Q, ITYPE_t minseglen, str method):
+def cbin_seg(np.ndarray[DTYPE_t, ndim=2] sumstat, ITYPE_t Q, ITYPE_t minseglen, str method):
     cdef ITYPE_t n = sumstat.shape[0] - 1
-    cdef np.ndarray[ITYPE_t, ndim=1] cptsout = np.zeros(Q,dtype=np.int64)
+    cdef np.ndarray[ITYPE_t, ndim=1] cptsout = np.zeros(Q, dtype=np.int64)
     cdef double [:] likeout = np.zeros(Q)
     cdef ITYPE_t op_cps
     cdef double [:] lambda_ = np.zeros(n)
@@ -187,9 +189,9 @@ def cbin_seg( np.ndarray[DTYPE_t, ndim=2] sumstat, ITYPE_t Q, ITYPE_t minseglen,
     tau_[1] = n
     cdef double null
     cdef double oldmax = np.inf 
-    cdef ITYPE_t q,p,i,j,st,end
+    cdef ITYPE_t q, p, i, j, st, end
 
-    if method =="mll_mean":
+    if method == "mll_mean":
         current_cost = mll_mean
     elif method == "mll_var":
         current_cost = mll_var
@@ -217,38 +219,38 @@ def cbin_seg( np.ndarray[DTYPE_t, ndim=2] sumstat, ITYPE_t Q, ITYPE_t minseglen,
         i = 1
         st = tau_[0]+1
         end = tau_[1]
-        null = (-0.5)*current_cost(sumstat[end,0]-sumstat[st-1,0],sumstat[end,1]-sumstat[st-1,1],sumstat[end,2]-sumstat[st-1,2] , end - st + 1)
-        for j in range(2,n-2):
-            if (j==end):
-                st=end+1
-                i=i+1
-                end=tau_[i]
-                null = (-0.5)*current_cost(sumstat[end,0]-sumstat[st-1,0],sumstat[end,1]-sumstat[st-1,1],sumstat[end,2]-sumstat[st-1,2], end - st + 1)
+        null = (-0.5)*current_cost(sumstat[end, 0]-sumstat[st-1, 0], sumstat[end, 1]-sumstat[st-1, 1], sumstat[end, 2]-sumstat[st-1, 2], end - st + 1)
+        for j in range(2, n-2):
+            if (j == end):
+                st = end+1
+                i = i+1
+                end = tau_[i]
+                null = (-0.5)*current_cost(sumstat[end, 0]-sumstat[st-1, 0], sumstat[end, 1]-sumstat[st-1, 1], sumstat[end, 2]-sumstat[st-1, 2], end - st + 1)
             else:
-                if (j-st>=minseglen) & (end-j>=minseglen):
-                    lambda_[j] = ((-0.5)*current_cost(sumstat[j,0]-sumstat[st-1,0],sumstat[j,1]-sumstat[st-1,1],sumstat[j,2]-sumstat[st-1,2], j - st + 1)) + ((-0.5)*current_cost(sumstat[end,0]-sumstat[j,0],sumstat[end,1]-sumstat[j,1],sumstat[end,2]-sumstat[j,2], end - j)) - null
+                if (j-st >= minseglen) & (end-j >= minseglen):
+                    lambda_[j] = ((-0.5)*current_cost(sumstat[j, 0]-sumstat[st-1, 0], sumstat[j, 1]-sumstat[st-1, 1], sumstat[j, 2]-sumstat[st-1, 2], j - st + 1)) + ((-0.5)*current_cost(sumstat[end, 0]-sumstat[j, 0], sumstat[end, 1]-sumstat[j, 1], sumstat[end, 2]-sumstat[j, 2], end - j)) - null
         max_out = np.max(lambda_)
         whichout = np.argmax(lambda_)
 
         cptsout[q] = whichout
-        likeout[q] =  min( oldmax,max_out)
+        likeout[q] =  min(oldmax, max_out)
         oldmax = likeout[q]
         tau_[q+2] = whichout
-        #tau_ = order_vec(tau_,q+3)
-        order_vec(tau_,q+3)
+        #tau_ = order_vec(tau_, q+3)
+        order_vec(tau_, q+3)
 
     return np.array(cptsout)
 
 
 @cython.wraparound(False)
 @cython.boundscheck(False) 
-def cseg_neigh( np.ndarray[DTYPE_t, ndim=2] sumstat, ITYPE_t Q, str method):
-    cdef ITYPE_t n=sumstat.shape[0]
-    cdef np.ndarray[DTYPE_t, ndim=2] all_seg=np.zeros((n,n))
+def cseg_neigh(np.ndarray[DTYPE_t, ndim=2] sumstat, ITYPE_t Q, str method):
+    cdef ITYPE_t n = sumstat.shape[0]
+    cdef np.ndarray[DTYPE_t, ndim=2] all_seg = np.zeros((n, n))
     cdef int i, j, q
     cdef DTYPE_t s
 
-    if method =="mll_mean":
+    if method == "mll_mean":
         current_cost = mll_mean
     elif method == "mll_var":
         current_cost = mll_var
@@ -270,36 +272,36 @@ def cseg_neigh( np.ndarray[DTYPE_t, ndim=2] sumstat, ITYPE_t Q, str method):
         current_cost = mbic_meanvar_poisson
     else:
         current_cost = mll_meanvar
-    for i in range(0,n) :
-        for j in prange(i,n,nogil=True):
-            all_seg[i,j] = -0.5*current_cost(sumstat[j,0]-sumstat[i,0],sumstat[j,1]-sumstat[i,1],sumstat[j,2]-sumstat[i,2] , j - i+1)
-    cdef np.ndarray[DTYPE_t, ndim=2] like_q = np.zeros((Q,n))
-    like_q[0,:] = all_seg[0,:]
-    cdef  np.ndarray[ITYPE_t, ndim=2] cp = np.zeros((Q,n),dtype=np.int64)
-    cdef DTYPE_t max_out =-np.inf
+    for i in range(0, n) :
+        for j in prange(i, n, nogil=True):
+            all_seg[i, j] = -0.5*current_cost(sumstat[j, 0]-sumstat[i, 0], sumstat[j, 1]-sumstat[i, 1], sumstat[j, 2]-sumstat[i, 2], j-i+1)
+    cdef np.ndarray[DTYPE_t, ndim=2] like_q = np.zeros((Q, n))
+    like_q[0, :] = all_seg[0, :]
+    cdef  np.ndarray[ITYPE_t, ndim=2] cp = np.zeros((Q, n), dtype=np.int64)
+    cdef DTYPE_t max_out = -np.inf
     cdef ITYPE_t max_which
     cdef np.ndarray[DTYPE_t, ndim=1] like
 
-    for q in range(1,Q):
-        for j in range(q,n):
-            like = like_q[q-1,(q-1):(j-1)]+all_seg[q:j,j]
+    for q in range(1, Q):
+        for j in range(q, n):
+            like = like_q[q-1, (q-1):(j-1)]+all_seg[q:j, j]
             max_which = 0
-            max_out =-np.inf
-            for i in range(0,j-q):
-                if  max_out <=like[i]:
+            max_out = -np.inf
+            for i in range(0, j-q):
+                if  max_out <= like[i]:
                     max_out = like[i]
                     max_which = i
-            #print(max_out,max_which)
+            #print(max_out, max_which)
 
-            like_q[q,j] = max_out
-            cp[q,j] = max_which + q
-    cdef  np.ndarray[ITYPE_t, ndim=2] cps_Q = np.zeros((Q,Q),dtype=np.int64)
-    for q in range(1,Q):
-        cps_Q[q,0]=cp[q,n-1]
-        for i in range(0,q):
-            cps_Q[q,i+1]=cp[q-i-1,cps_Q[q,i]]
+            like_q[q, j] = max_out
+            cp[q, j] = max_which + q
+    cdef  np.ndarray[ITYPE_t, ndim=2] cps_Q = np.zeros((Q, Q), dtype=np.int64)
+    for q in range(1, Q):
+        cps_Q[q, 0] = cp[q, n-1]
+        for i in range(0, q):
+            cps_Q[q, i+1] = cp[q-i-1, cps_Q[q, i]]
   
-    criterium = -2 * like_q[:,n-2]
+    criterium = -2 * like_q[:, n-2]
     op_cps = np.argmin(criterium)
     cpts = np.sort(cps_Q[op_cps, :][cps_Q[op_cps, :] > 0])
   
