@@ -17,7 +17,7 @@ def multiple_preprocessing(df):
     return pca_frame_scale
 
 def nonpamametric_ed_sumstat(data, K=10):
-    ts_data = data.ix[:, 0]
+    ts_data = data.iloc[:, 0]
     n = len(ts_data)-1
     K = min(K, n)
     Q = np.zeros((K, n+1))
