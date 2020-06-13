@@ -18,6 +18,7 @@ Working on Windows/Linux and python3.6
 ## Install
 Download and run:
 ```shell
+pip3 install -r requirements.txt
 pip3 install .
 ```
 ## Tests 
