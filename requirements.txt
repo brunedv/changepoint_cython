@@ -1,5 +1,5 @@
 certifi==2020.4.5.1
--e git+https://github.com/brunedv/changepoint_cython.git@a37a13e2c74e4188382278ff2a74bf0433c67c35#egg=changepoint_cython
+pytest
 Cython==0.29.20
 joblib==0.15.1
 numpy==1.18.5
