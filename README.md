@@ -16,7 +16,8 @@ Model implemented for the multivariate case :
 
 Working on Windows/Linux and python3.x
 ## Install
-###  PypI
+###  PyPI
+Source available on https://pypi.org/project/changepoint-cython/
 ```shell
 pip install changepoint-cython
 ```
