@@ -38,15 +38,5 @@ jobs:
       run: |
         pip install .
         pytest tests/ -v
-    - name: Install twine
-      run: |
-        python -m pip install --upgrade pip
-        pip install setuptools wheel twine
-    - name: Build and publish
-      env:
-        TWINE_USERNAME: ${{ secrets.TOKEN_USERNAME}}
-        TWINE_PASSWORD: ${{ secrets.TOKEN_PASSWORD }}
-      run: |
-        python setup.py sdist bdist_wheel
-        twine upload dist/*
+    
    

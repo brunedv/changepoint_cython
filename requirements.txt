@@ -1,5 +1,5 @@
 pytest
-Cython
+cython
 numpy
 pandas
 scikit-learn
