@@ -14,8 +14,13 @@ Model implemented for the multivariate case :
 - Normal (mean).
 
 
-Working on Windows/Linux and python3.6
+Working on Windows/Linux and python3.x
 ## Install
+###  PypI
+```shell
+pip install changepoint-cython
+```
+### From source
 Download and run:
 ```shell
 pip3 install -r requirements.txt
