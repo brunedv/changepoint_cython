@@ -1,33 +1,38 @@
-import pytest
-import numpy as np 
+"""
+Unitest
+
+"""
+import numpy as np
 import pandas as pd
+
 from pychangepoints  import   algo_changepoints
 
+SIZE_TS = 1000
+CPTS_TRUE = [0, 400, 800, SIZE_TS]
+NB_SEG = len(CPTS_TRUE)-1
+NB_CPTS = NB_SEG-1
+MEAN_GEN = np.array([10, 1, 5])
+VAR_GEN = np.array([0.5, 0.5, 0.5])
+METHOD = "mbic_mean"
+PEN_ = 5
+MINSEG = 10
+TIME_SERIES = np.zeros(SIZE_TS)
 
-size_ts = 1000
-cpts_true = [0, 400, 800, size_ts]
-nb_seg = len(cpts_true)-1
-nb_cpts = nb_seg-1
-mean = np.array([10, 1, 5])
-var = np.array([0.5, 0.5, 0.5])
+for j in range(0, NB_SEG):
+    TIME_SERIES[CPTS_TRUE[j]:CPTS_TRUE[j+1]] = np.random.normal(MEAN_GEN[j], VAR_GEN[j], \
+		size=CPTS_TRUE[j+1]-CPTS_TRUE[j])
 
-method = "mbic_mean"
-pen_ = 5
-minseg = 10
-time_series = np.zeros(size_ts)
-
-for j in range(0, nb_seg):
-	time_series[cpts_true[j]:cpts_true[j+1]] = np.random.normal(mean[j], var[j], size=cpts_true[j+1]-cpts_true[j])
-
-stats_ts = np.zeros((size_ts, 3))
-mean = np.mean(time_series)
-stats_ts[:, 0] = time_series.cumsum()
-stats_ts[:, 1] = (time_series**2).cumsum()
-stats_ts[:, 2] = ((time_series-mean)**2).cumsum()
-stats_ts_pelt = np.concatenate([stats_ts[:, 0], stats_ts[:, 1], stats_ts[:, 2]])
+STATS_TS = np.zeros((SIZE_TS, 3))
+MEAN_TS = np.mean(TIME_SERIES)
+STATS_TS[:, 0] = TIME_SERIES.cumsum()
+STATS_TS[:, 1] = (TIME_SERIES**2).cumsum()
+STATS_TS[:, 2] = ((TIME_SERIES-MEAN_TS)**2).cumsum()
+STATS_TS_PELT = np.concatenate([STATS_TS[:, 0], STATS_TS[:, 1], STATS_TS[:, 2]])
 
 def test_pelt():
-	res_seg = np.sort(algo_changepoints.pelt(pd.DataFrame(time_series), pen_, minseg, method)[0])
-	
-	assert res_seg[0] == cpts_true[1],"test failed"
-	assert res_seg[1] == cpts_true[2],"test failed"
+	"""
+	test of pelt univariate case
+	"""
+	res_seg = np.sort(algo_changepoints.pelt(pd.DataFrame(TIME_SERIES), PEN_, MINSEG, METHOD)[0])
+	assert res_seg[0] == CPTS_TRUE[1], "test failed"
+	assert res_seg[1] == CPTS_TRUE[2], "test failed"
