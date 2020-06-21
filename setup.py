@@ -14,12 +14,12 @@ extensions = [Extension('pychangepoints.cython_pelt', ['pychangepoints/pelt_cyth
               Extension('pychangepoints.nonparametric', ['pychangepoints/nppelt.pyx'])]
 setup(
     name='changepoint_cython',
-    version='0.1.1',
+    version='0.1.2',
     author='Vianney Bruned',
     install_requires=['cython', 'numpy', 'pandas', 'scikit-learn'],
     author_email="vianney.bruned@gmail.com",
     description="A cython version of the changepoint R package",
-    url="https://https://github.com/brunedv/changepoint_cython",
+    url="https://github.com/brunedv/changepoint_cython",
     packages=["pychangepoints"],
     include_package_data=True,
     ext_modules=cythonize(extensions),
