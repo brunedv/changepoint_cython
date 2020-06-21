@@ -14,7 +14,7 @@ extensions = [Extension('pychangepoints.cython_pelt', ['pychangepoints/pelt_cyth
               Extension('pychangepoints.nonparametric', ['pychangepoints/nppelt.pyx'])]
 setup(
     name='changepoint_cython',
-    version='0.1.2',
+    version='0.1.3',
     author='Vianney Bruned',
     install_requires=['cython', 'numpy', 'pandas', 'scikit-learn'],
     author_email="vianney.bruned@gmail.com",
