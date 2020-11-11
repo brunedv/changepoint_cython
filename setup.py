@@ -16,7 +16,7 @@ setup(
     name='changepoint_cython',
     version='0.1.3',
     author='Vianney Bruned',
-    setup_requires=['cython >= 0.29']
+    setup_requires=['cython >= 0.29'],
     install_requires=['cython', 'numpy', 'pandas', 'scikit-learn'],
     author_email="vianney.bruned@gmail.com",
     description="A cython version of the changepoint R package",
