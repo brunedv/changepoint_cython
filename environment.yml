@@ -1,0 +1,11 @@
+name: changepoints
+channels:
+  - defaults
+dependencies:
+  - cython
+  - pytest
+  - numpy
+  - pandas
+  - scikit-learn
+
+
