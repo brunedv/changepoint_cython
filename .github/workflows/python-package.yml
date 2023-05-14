@@ -14,7 +14,6 @@ jobs:
     - name: check gcc
       run: |
         gcc --version
-    - name: Install and Build
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
