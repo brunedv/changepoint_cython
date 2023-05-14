@@ -24,6 +24,7 @@ jobs:
         pip install poetry
         make install
     - name: unit tests 
-        run: make unit-tests
+      run: |
+        make unit-tests
     
    
