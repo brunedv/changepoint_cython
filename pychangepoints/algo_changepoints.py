@@ -6,8 +6,7 @@ import pandas as pd
 from sklearn.decomposition import PCA
 
 from .cython_pelt import cbin_seg, cpelt, cseg_neigh
-from .multiple_dim import (cbin_seg_multiple, cpelt_multiple,
-                           cseg_neigh_multiple)
+from .multiple_dim import cbin_seg_multiple, cpelt_multiple, cseg_neigh_multiple
 from .nonparametric import cnp_pelt
 
 
@@ -58,7 +57,7 @@ def pelt(data, pen_, minseg, method):
     stats_ts = np.zeros((size_ts + 1, 3))
     mean = np.mean(times_series)
     stats_ts[:, 0] = np.append(0, times_series.cumsum())
-    stats_ts[:, 1] = np.append(0, (times_series ** 2).cumsum())
+    stats_ts[:, 1] = np.append(0, (times_series**2).cumsum())
     stats_ts[:, 2] = np.append(0, ((times_series - mean) ** 2).cumsum())
 
     stats_ts_pelt = np.concatenate([stats_ts[:, 0], stats_ts[:, 1], stats_ts[:, 2]])
@@ -86,7 +85,7 @@ def segneigh(data, nb_cpts, method):
     size_ts = times_series.shape[0]
     stats_ts = np.zeros((size_ts + 1, 3))
     stats_ts[:, 0] = np.append(0, times_series.cumsum())
-    stats_ts[:, 1] = np.append(0, (times_series ** 2).cumsum())
+    stats_ts[:, 1] = np.append(0, (times_series**2).cumsum())
     stats_ts[:, 2] = np.append(0, ((times_series - mean) ** 2).cumsum())
 
     return cseg_neigh(stats_ts, nb_cpts, method)
@@ -101,7 +100,7 @@ def binseg(data, nb_cpts, minseg, method):
     size_ts = times_series.shape[0]
     stats_ts = np.zeros((size_ts + 1, 3))
     stats_ts[:, 0] = np.append(0, times_series.cumsum())
-    stats_ts[:, 1] = np.append(0, (times_series ** 2).cumsum())
+    stats_ts[:, 1] = np.append(0, (times_series**2).cumsum())
     stats_ts[:, 2] = np.append(0, ((times_series - mean) ** 2).cumsum())
 
     return cbin_seg(stats_ts, nb_cpts, minseg, method)
@@ -119,7 +118,7 @@ def binseg_multiple(data, nb_cpts, minseg, method):
     stats_ts = np.zeros((size_ts + 1, 3, dim_ts))
     zeros = np.zeros(dim_ts)
     stats_ts[:, 0, :] = np.insert(times_series.cumsum(axis=0), 0, zeros, axis=0)
-    stats_ts[:, 1, :] = np.insert((times_series ** 2).cumsum(axis=0), 0, zeros, axis=0)
+    stats_ts[:, 1, :] = np.insert((times_series**2).cumsum(axis=0), 0, zeros, axis=0)
     stats_ts[:, 2, :] = np.insert(
         ((times_series - mean) ** 2).cumsum(axis=0), 0, zeros, axis=0
     )
@@ -138,7 +137,7 @@ def pelt_multiple(data, pen_, minseg, method):
     stats_ts = np.zeros((size_ts + 1, 3, dim_ts))
     zeros = np.zeros(dim_ts)
     stats_ts[:, 0, :] = np.insert(times_series.cumsum(axis=0), 0, zeros, axis=0)
-    stats_ts[:, 1, :] = np.insert((times_series ** 2).cumsum(axis=0), 0, zeros, axis=0)
+    stats_ts[:, 1, :] = np.insert((times_series**2).cumsum(axis=0), 0, zeros, axis=0)
     stats_ts[:, 2, :] = np.insert(
         ((times_series - mean) ** 2).cumsum(axis=0), 0, zeros, axis=0
     )
@@ -157,7 +156,7 @@ def segneigh_multiple(data, nb_cpts, method):
     stats_ts = np.zeros((size_ts + 1, 3, dim_ts))
     zeros = np.zeros(dim_ts)
     stats_ts[:, 0, :] = np.insert(times_series.cumsum(axis=0), 0, zeros, axis=0)
-    stats_ts[:, 1, :] = np.insert((times_series ** 2).cumsum(axis=0), 0, zeros, axis=0)
+    stats_ts[:, 1, :] = np.insert((times_series**2).cumsum(axis=0), 0, zeros, axis=0)
     stats_ts[:, 2, :] = np.insert(
         ((times_series - mean) ** 2).cumsum(axis=0), 0, zeros, axis=0
     )
