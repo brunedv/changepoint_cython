@@ -2,10 +2,9 @@ import math
 
 import numpy as np
 
-cimport cost_function_multiple
 cimport cython
 cimport numpy as np
-from cost_function_multiple cimport mbic_mean, mll_mean, order_vec
+from .cost_function_multiple cimport mbic_mean, mll_mean, order_vec
 from libc.math cimport sqrt
 
 from cython.parallel import prange

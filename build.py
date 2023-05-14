@@ -1,18 +1,42 @@
 import os
 import shutil
-from distutils.core import Distribution
-from distutils.extension import Extension
+from distutils.command.build_ext import build_ext
+from distutils.core import Distribution, Extension
+import numpy
+from Cython.Build import cythonize
 
-from Cython.Build import build_ext, cythonize
+compile_args = ["-march=native", "-O3", "-msse", "-msse2", "-mfma", "-mfpmath=sse"]
+link_args = []
+include_dirs = [numpy.get_include()]
+libraries = ["m"]
 
 
+def build():
+    extensions = [Extension('pychangepoints.cython_pelt', ['pychangepoints/pelt_cython.pyx'], extra_compile_args=["-O3", "-ffast-math", "-march=native", "-fopenmp"], extra_link_args=['-fopenmp'],  include_dirs=[numpy.get_include()]),
+            Extension('pychangepoints.multiple_dim', ['pychangepoints/mutiple_algos.pyx'],  include_dirs=[numpy.get_include()]),
+            Extension('pychangepoints.nonparametric', ['pychangepoints/nppelt.pyx'],  include_dirs=[numpy.get_include()])]
+            
+    ext_modules = cythonize(
+        extensions,
+        include_path=include_dirs,
+        compiler_directives={"binding": True, "language_level": 3},
+    )
 
-extensions = [Extension('pychangepoints.cython_pelt', ['pychangepoints/pelt_cython.pyx', 'pychangepoints/cost_function.pxd', 'pychangepoints/utils.pxd'], extra_compile_args=["-O3", "-ffast-math", "-march=native", "-fopenmp"], extra_link_args=['-fopenmp']),
-              Extension('pychangepoints.multiple_dim', ['pychangepoints/mutiple_algos.pyx', 'pychangepoints/cost_function_multiple.pxd']),
-              Extension('pychangepoints.nonparametric', ['pychangepoints/nppelt.pyx'])]
+    distribution = Distribution({"name": "extended", "ext_modules": ext_modules})
+    distribution.package_dir = "extended"
 
-ext_modules = cythonize(extensions, compiler_directives={'language_level': 3})
-dist = Distribution({"ext_modules": ext_modules})
-cmd = build_ext(dist)
-cmd.ensure_finalized()
-cmd.run()
+    cmd = build_ext(distribution)
+    cmd.ensure_finalized()
+    cmd.run()
+
+    # Copy built extensions back to the project
+    for output in cmd.get_outputs():
+        relative_extension = os.path.relpath(output, cmd.build_lib)
+        shutil.copyfile(output, relative_extension)
+        mode = os.stat(relative_extension).st_mode
+        mode |= (mode & 0o444) >> 2
+        os.chmod(relative_extension, mode)
+
+
+if __name__ == "__main__":
+    build()

@@ -4,10 +4,8 @@ cimport numpy as np
 
 import math
 
-cimport cost_function
 cimport cython
-cimport utils
-from cost_function cimport (
+from .cost_function cimport (
     mbic_mean,
     mbic_meanvar,
     mbic_meanvar_exp,
@@ -22,7 +20,7 @@ from cost_function cimport (
     mll_var,
 )
 from libc.math cimport M_PI, fmax, isnan, log, sqrt
-from utils cimport order_vec
+from .utils cimport order_vec
 
 from cython.parallel import prange
 
