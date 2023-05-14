@@ -27,7 +27,7 @@ doc: ## setup-dev
 	cp -r docs/build/html/* $(DOCUMENTATION_OUTPUT)
 
 unit-tests:
-	poetry run pytest -v --cov=$(SOURCE_DIR) $(COVERAGE_OPTIONS) tests/
+	poetry run pytest tests/
 
 format:  ## Autoformat project codebase with black and isort
 	poetry run black $(SOURCE_DIR)
