@@ -1,3 +1,36 @@
+[tool.poetry]
+name = "changepoint-cython"
+version = "0.1.4"
+description = "A cython version of the changepoint R package"
+authors = ["Vianney Bruned"]
+license = "GNU General Public License v3.0"
+readme = "README.md"
+packages = [{include = "pychangepoints"}]
+include = [{ path = "pychangepoints/**/*.so", format = "wheel" }]
+
+[tool.poetry.dependencies]
+python = "^3.8,^3.9,^3.10"
+pandas = "^1.2.5"
+scikit-learn = "^1.2.0"
+
+
 [build-system]
-requires = ["setuptools >= 40.6.0", "wheel", "cython", "numpy"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core", "Cython~=0.29.34", "numpy>=1.22.1"]
+
+[tool.poetry.build]
+generate-setup-file = false
+script = "build.py"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^0.982"
+flake8 = "^5.0.4"
+isort = "^5.10.1"
+pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
+types-pyyaml = "^6.0.12.1"
+types-python-dateutil = "^2.8.19.2"
+black = "^22.10.0"
+types-toml = "^0.10.8"
+pre-commit = "^3.2.1"
+bump2version = "^1.0.1"
