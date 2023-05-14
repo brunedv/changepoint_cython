@@ -9,7 +9,7 @@ packages = [{include = "pychangepoints"}]
 include = [{ path = "pychangepoints/**/*.so", format = "wheel" }]
 
 [tool.poetry.dependencies]
-python = "^3.8,^3.9,^3.10"
+python = "^3.8,<3.11"
 pandas = "^1.2.5"
 scikit-learn = "^1.2.0"
 
