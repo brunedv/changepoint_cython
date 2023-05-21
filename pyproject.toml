@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "changepoint-cython"
-version = "0.1.4"
+version = "0.1.5"
 description = "A cython version of the changepoint R package"
 authors = ["Vianney Bruned"]
 license = "GNU General Public License v3.0"
@@ -16,6 +16,7 @@ scikit-learn = "^1.2.0"
 
 [build-system]
 requires = ["poetry-core", "Cython~=0.29.34", "numpy>=1.22.1"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.build]
 generate-setup-file = false
