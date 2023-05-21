@@ -30,7 +30,7 @@ jobs:
         poetry  config repositories.test-pypi https://test.pypi.org/legacy/
         poetry config pypi-token.test-pypi pypi-$PYPI_TEST_TOKEN
         poetry version prerelease
-        poetry publish -r test-pypi
+        poetry publish --build -r test-pypi
  
 
     
