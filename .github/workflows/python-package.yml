@@ -28,7 +28,7 @@ jobs:
     - name: publish on pypi-test
       run: |
         poetry  config repositories.test-pypi https://test.pypi.org/legacy/
-        poetry config pypi-token.test-pypi pypi-$PYPI_TEST_TOKEN
+        poetry config pypi-token.test-pypi pypi-${{ secrets.PYPI_TEST_TOKEN}}$
         poetry version prerelease
         poetry publish --build -r test-pypi
  
