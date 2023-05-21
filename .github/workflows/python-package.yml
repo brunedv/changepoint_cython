@@ -25,5 +25,11 @@ jobs:
     - name: unit tests 
       run: |
         make unit-tests
+    - name: publish on pypi-test
+      run: |
+        poetry  config repositories.test-pypi https://test.pypi.org/legacy/
+        poetry config pypi-token.test-pypi $PYPI_TEST_TOKEN
+        poetry publish 
+
     
    
