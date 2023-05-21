@@ -1,5 +1,0 @@
-pytest
-cython
-numpy
-pandas
-scikit-learn

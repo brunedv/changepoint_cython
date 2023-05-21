@@ -40,3 +40,18 @@ def test_pelt():
     )
     assert res_seg[0] == CPTS_TRUE[1], "test failed"
     assert res_seg[1] == CPTS_TRUE[2], "test failed"
+
+def test_binseg():
+    """
+    test of binseg univariate case
+    """
+    res_seg = np.sort(
+        algo_changepoints.binseg(pd.DataFrame(TIME_SERIES), NB_CPTS, MINSEG, METHOD)
+    )
+    print(res_seg)
+    assert res_seg[0] == CPTS_TRUE[1], "test failed"
+    assert res_seg[1] == CPTS_TRUE[2], "test failed"
+
+
+
+    

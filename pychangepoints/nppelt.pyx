@@ -1,9 +1,11 @@
-import numpy as np 
-cimport numpy as np 
-import math 
-cimport cython
-from libc.math cimport sqrt, log, M_PI, fmax, isnan
+import numpy as np
 
+cimport numpy as np
+
+import math
+
+cimport cython
+from libc.math cimport M_PI, fmax, isnan, log, sqrt
 
 DTYPE = np.float64
 ITYPE = np.int64

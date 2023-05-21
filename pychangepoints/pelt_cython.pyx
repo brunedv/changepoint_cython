@@ -1,17 +1,28 @@
-import numpy as np 
-cimport numpy as np 
-import math 
+import numpy as np
+
+cimport numpy as np
+
+import math
+
 cimport cython
+from .cost_function cimport (
+    mbic_mean,
+    mbic_meanvar,
+    mbic_meanvar_exp,
+    mbic_meanvar_poisson,
+    mbic_var,
+    mll_mean,
+    mll_meanvar,
+    mll_meanvar_exp,
+    mll_meanvar_poisson,
+    mll_nonparametric_ed,
+    mll_nonparametric_ed_mbic,
+    mll_var,
+)
+from libc.math cimport M_PI, fmax, isnan, log, sqrt
+from .utils cimport order_vec
 
-from libc.math cimport sqrt, log, M_PI, fmax, isnan
-cimport cost_function
-from cost_function cimport mll_mean, mll_var, mll_meanvar, mll_meanvar_exp, mll_meanvar_poisson, mbic_var, mbic_meanvar, mbic_mean, mbic_meanvar_exp, mbic_meanvar_poisson
-from cost_function cimport mll_nonparametric_ed, mll_nonparametric_ed_mbic
-
-cimport utils
-from utils cimport order_vec
 from cython.parallel import prange
-
 
 DTYPE = np.float64
 ITYPE = np.int64

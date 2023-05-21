@@ -1,6 +1,9 @@
-import numpy as np 
-cimport numpy as np 
-import math 
+import numpy as np
+
+cimport numpy as np
+
+import math
+
 cimport cython
 
 DTYPE = np.float64
@@ -8,7 +11,7 @@ ITYPE = np.int64
 ctypedef np.float64_t DTYPE_t
 ctypedef np.int64_t ITYPE_t
 
-from libc.math cimport sqrt, log, M_PI, fmax, isnan
+from libc.math cimport M_PI, fmax, isnan, log, sqrt
 
 
 @cython.wraparound(False)

@@ -1,12 +1,12 @@
-import math 
-import numpy as np 
+import math
+
+import numpy as np
+
+cimport cython
+cimport numpy as np
+from .cost_function_multiple cimport mbic_mean, mll_mean, order_vec
 from libc.math cimport sqrt
 
-cimport numpy as np 
-cimport cython
-cimport cost_function_multiple
-
-from cost_function_multiple cimport mll_mean, mbic_mean, order_vec
 from cython.parallel import prange
 
 DTYPE = np.float64
